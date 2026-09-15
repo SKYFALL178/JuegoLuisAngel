@@ -1,14 +1,45 @@
 const MAX_LIVES = 10;
 const STORAGE_KEY = 'normal-superior-convencion-save';
+const SUPABASE_TABLE = 'school_state';
 
 let students = [];
 let selectedStudentIndex = null;
+let supabaseClient = null;
 
 const namesInput = document.getElementById('namesInput');
 const searchInput = document.getElementById('searchInput');
 const studentsList = document.getElementById('studentsList');
 const selectedStudentName = document.getElementById('selectedStudentName');
 const feedbackBanner = document.getElementById('feedbackBanner');
+const supabaseUrlInput = document.getElementById('supabaseUrlInput');
+const supabaseKeyInput = document.getElementById('supabaseKeyInput');
+
+const getSupabaseConfig = () => {
+  const url = (supabaseUrlInput.value || '').trim();
+  const key = (supabaseKeyInput.value || '').trim();
+
+  if (!url || !key) return null;
+  return { url, key };
+};
+
+const initSupabaseClient = () => {
+  if (!window.supabase) {
+    showFeedback('La librería de Supabase no está disponible.', 'neutral');
+    return null;
+  }
+
+  const config = getSupabaseConfig();
+  if (!config) {
+    return null;
+  }
+
+  try {
+    return window.supabase.createClient(config.url, config.key);
+  } catch (error) {
+    console.error('Error creando cliente de Supabase:', error);
+    return null;
+  }
+};
 
 const showFeedback = (message, type = 'neutral') => {
   feedbackBanner.textContent = message;
@@ -19,17 +50,67 @@ const showFeedback = (message, type = 'neutral') => {
   }
 };
 
-const saveState = () => {
+const saveState = async () => {
   const data = {
+    id: 'school_state',
     students,
     selectedStudentIndex,
     namesInputValue: namesInput.value,
+    updatedAt: new Date().toISOString(),
   };
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  const config = getSupabaseConfig();
+  if (!config) return;
+
+  if (!supabaseClient) {
+    supabaseClient = initSupabaseClient();
+  }
+
+  if (!supabaseClient) {
+    showFeedback('No se pudo conectar a Supabase.', 'neutral');
+    return;
+  }
+
+  try {
+    const { error } = await supabaseClient.from(SUPABASE_TABLE).upsert(data, { onConflict: 'id' });
+    if (error) throw error;
+    showFeedback('Datos sincronizados con Supabase.', 'good');
+  } catch (error) {
+    console.error('Error guardando en Supabase:', error);
+    showFeedback('Se guardó localmente, pero hubo un error en la nube.', 'neutral');
+  }
 };
 
-const loadState = () => {
+const loadState = async () => {
+  const config = getSupabaseConfig();
+
+  if (config) {
+    if (!supabaseClient) {
+      supabaseClient = initSupabaseClient();
+    }
+
+    if (supabaseClient) {
+      try {
+        const { data, error } = await supabaseClient
+          .from(SUPABASE_TABLE)
+          .select('*')
+          .eq('id', 'school_state')
+          .single();
+
+        if (!error && data) {
+          students = Array.isArray(data.students) ? data.students : [];
+          selectedStudentIndex = data.selectedStudentIndex ?? 0;
+          namesInput.value = data.namesInputValue || '';
+          return true;
+        }
+      } catch (error) {
+        console.error('Error cargando desde Supabase:', error);
+      }
+    }
+  }
+
   const saved = localStorage.getItem(STORAGE_KEY);
   if (!saved) return false;
 
@@ -167,18 +248,18 @@ const resetGame = () => {
   renderStudents();
 };
 
-const saveSession = () => {
+const saveSession = async () => {
   if (!students.length) {
     showFeedback('Primero escribe y comienza el juego para guardar una sesión.', 'neutral');
     return;
   }
 
-  saveState();
-  showFeedback('Sesión guardada correctamente en este navegador.', 'good');
+  await saveState();
+  showFeedback('Sesión guardada correctamente.', 'good');
 };
 
-const loadSession = () => {
-  const hasLoaded = loadState();
+const loadSession = async () => {
+  const hasLoaded = await loadState();
 
   if (!hasLoaded) {
     showFeedback('No hay una sesión guardada aún.', 'neutral');
@@ -245,13 +326,32 @@ document.getElementById('loadSessionBtn').addEventListener('click', loadSession)
 document.getElementById('resetBtn').addEventListener('click', resetGame);
 document.getElementById('goodBehaviorBtn').addEventListener('click', () => applyBehaviorChange('good'));
 document.getElementById('badBehaviorBtn').addEventListener('click', () => applyBehaviorChange('bad'));
+document.getElementById('connectSupabaseBtn').addEventListener('click', () => {
+  const config = getSupabaseConfig();
+  if (!config) {
+    showFeedback('Ingresa la URL y la clave de Supabase antes de conectar.', 'neutral');
+    return;
+  }
+
+  supabaseClient = initSupabaseClient();
+  if (supabaseClient) {
+    showFeedback('Conexión a Supabase lista. Puedes sincronizar.', 'good');
+  }
+});
+document.getElementById('syncNowBtn').addEventListener('click', async () => {
+  await saveState();
+  await loadState();
+  renderStudents();
+});
 searchInput.addEventListener('input', renderStudents);
 
-const hasSavedSession = loadState();
-if (hasSavedSession) {
-  showFeedback('Se restauró la última sesión guardada.', 'good');
-} else {
-  showFeedback('Esperando acción del profesor...', 'neutral');
-}
+(async () => {
+  const hasSavedSession = await loadState();
+  if (hasSavedSession) {
+    showFeedback('Se restauró la última sesión guardada.', 'good');
+  } else {
+    showFeedback('Esperando acción del profesor...', 'neutral');
+  }
 
-renderStudents();
+  renderStudents();
+})();
