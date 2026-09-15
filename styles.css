@@ -1,0 +1,362 @@
+:root {
+  --bg-dark: #0e5ca8;
+  --bg-mid: #dfeaf7;
+  --primary: #f5ce46;
+  --secondary: #ffffff;
+  --danger: #d94c5c;
+  --good: #2bb673;
+  --card: #ffffff;
+  --text: #123456;
+  --muted: #376a9c;
+  --shadow: rgba(10, 42, 74, 0.22);
+  --panel: #eff7ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, var(--bg-dark), #4f9ae6 30%, #dfeaf7 100%);
+  color: var(--text);
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.header {
+  text-align: center;
+  color: #0d3355;
+  margin-bottom: 24px;
+}
+
+.school-emblem {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.emblem-ring {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, #f8e57d 0%, #f2cf4c 52%, #e1b93b 100%);
+  border: 7px solid #f5d764;
+  box-shadow: 0 12px 22px rgba(27, 40, 54, 0.2);
+  position: relative;
+}
+
+.emblem-ring::before,
+.emblem-ring::after {
+  content: "";
+  position: absolute;
+  width: 92%;
+  height: 92%;
+  border: 4px solid rgba(20, 51, 75, 0.15);
+  border-radius: 50%;
+}
+
+.emblem-center {
+  font-size: 2.7rem;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.12));
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(14, 92, 168, 0.18);
+  padding: 8px 18px;
+  border-radius: 999px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #0d3355;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  text-shadow: 0 2px 0 rgba(255,255,255,0.6);
+  color: #0d3355;
+}
+
+.header p {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  color: #0d3355;
+  letter-spacing: 0.6px;
+  font-weight: 700;
+}
+
+.panel {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 22px;
+}
+
+.setup,
+.teacher-controls,
+.scoreboard {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 16px 30px var(--shadow);
+  border: 2px solid rgba(14, 92, 168, 0.12);
+}
+
+.setup h2,
+.teacher-controls h2,
+.scoreboard h2 {
+  margin-top: 0;
+  color: #0d3355;
+  font-size: 1.5rem;
+}
+
+textarea,
+input {
+  width: 100%;
+  border: 2px solid #bfd8f7;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 1rem;
+  color: var(--text);
+  background: #f8fbff;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 170px;
+}
+
+textarea:focus,
+input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 206, 70, 0.16);
+}
+
+.actions,
+.buttons-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button.primary {
+  background: linear-gradient(135deg, var(--primary), #f0c128);
+  color: #0d3355;
+}
+
+button.secondary {
+  background: linear-gradient(135deg, #edf6ff, #dfeeff);
+  color: var(--text);
+}
+
+button.good {
+  background: linear-gradient(135deg, var(--good), #1b9a5f);
+  color: white;
+}
+
+button.bad {
+  background: linear-gradient(135deg, var(--danger), #c52c43);
+  color: white;
+}
+
+.game-area {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 22px;
+}
+
+.selected-student-box {
+  margin: 14px 0 18px;
+  background: linear-gradient(135deg, #eaf4ff, #dfeeff);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #123456;
+  font-weight: 700;
+}
+
+.feedback-banner {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #edf6ff, #dfeeff);
+  color: #123456;
+  font-weight: 700;
+  border: 1px solid rgba(14, 92, 168, 0.12);
+  transition: all 0.25s ease;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.feedback-banner.good {
+  background: linear-gradient(135deg, #eafaf3, #dff9eb);
+  color: #126c44;
+  border-color: rgba(43, 182, 115, 0.35);
+}
+
+.feedback-banner.bad {
+  background: linear-gradient(135deg, #fff1f2, #ffe1e5);
+  color: #a03245;
+  border-color: rgba(217, 76, 92, 0.3);
+}
+
+.search-box {
+  margin-top: 18px;
+}
+
+.search-box label {
+  display: block;
+  margin-bottom: 8px;
+  color: #0d3355;
+  font-weight: 700;
+}
+
+.students-list {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.student-card {
+  border: 2px solid #dfeaf7;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff, #f7fbff);
+  padding: 16px;
+  cursor: pointer;
+  transition: border 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.student-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(18, 52, 86, 0.08);
+}
+
+.student-card.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(245, 206, 70, 0.18);
+}
+
+.student-card.pulse-good {
+  animation: goodPulse 0.7s ease;
+}
+
+.student-card.pulse-bad {
+  animation: badPulse 0.7s ease;
+}
+
+.student-card.out {
+  opacity: 0.58;
+  background: #f2f4f7;
+}
+
+.student-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-name {
+  font-weight: 800;
+  color: #0d3355;
+  font-size: 1.08rem;
+}
+
+.student-status {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.lives {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  min-height: 24px;
+}
+
+.life {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f7e9eb;
+  color: var(--danger);
+  font-size: 0.8rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.life.active {
+  background: #e7f9ef;
+  color: var(--good);
+}
+
+.life.lost {
+  background: #edf2f8;
+  color: #8ea5bb;
+}
+
+.life.bump {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 4px rgba(245, 206, 70, 0.18);
+}
+
+.empty-state {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+@keyframes goodPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(43, 182, 115, 0); }
+  30% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(43, 182, 115, 0.08); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(43, 182, 115, 0); }
+}
+
+@keyframes badPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(217, 76, 92, 0); }
+  30% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(217, 76, 92, 0.08); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(217, 76, 92, 0); }
+}
+
+@media (max-width: 850px) {
+  .panel {
+    grid-template-columns: 1fr;
+  }
+}

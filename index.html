@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Normal Superior de Convención</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="school-emblem" aria-label="Escudo de la escuela">
+          <div class="emblem-ring">
+            <div class="emblem-center">🐝</div>
+          </div>
+        </div>
+        <div class="badge">Escuela Normal Superior</div>
+        <h1>Normal Superior de Convención</h1>
+        <p>Piedad · Sencillez · Trabajo</p>
+      </header>
+
+      <main class="panel">
+        <section class="setup">
+          <h2>Registrar estudiantes</h2>
+          <textarea
+            id="namesInput"
+            rows="8"
+            placeholder="Escribe los nombres de los estudiantes, uno por línea o separados por coma..."
+          ></textarea>
+          <div class="actions">
+            <button id="startGameBtn" class="primary">Iniciar juego</button>
+            <button id="saveSessionBtn" class="secondary">Guardar sesión</button>
+            <button id="loadSessionBtn" class="secondary">Cargar sesión</button>
+            <button id="resetBtn" class="secondary">Reiniciar</button>
+          </div>
+
+          <div class="search-box">
+            <label for="searchInput">Buscar estudiante</label>
+            <input id="searchInput" type="text" placeholder="Escribe el nombre..." />
+          </div>
+        </section>
+
+        <section class="game-area">
+          <div class="teacher-controls">
+            <h2>Control del profesor</h2>
+            <div class="selected-student-box">
+              <span>Estudiante seleccionado:</span>
+              <strong id="selectedStudentName">Ninguno</strong>
+            </div>
+
+            <div id="feedbackBanner" class="feedback-banner" aria-live="polite">
+              Esperando acción del profesor...
+            </div>
+
+            <div class="buttons-row">
+              <button id="goodBehaviorBtn" class="good">Comportamiento bueno (+1)</button>
+              <button id="badBehaviorBtn" class="bad">Se portó mal (-1)</button>
+            </div>
+          </div>
+
+          <div class="scoreboard">
+            <h2>Vidas de los estudiantes</h2>
+            <div id="studentsList" class="students-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
