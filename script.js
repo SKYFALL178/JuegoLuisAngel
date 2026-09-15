@@ -261,6 +261,16 @@ const startGame = () => {
   renderStudents();
 };
 
+const resetGame = () => {
+  students = [];
+  selectedStudentIndex = null;
+  namesInput.value = '';
+  searchInput.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+  showFeedback('Juego reiniciado. Esperando nuevos nombres.', 'neutral');
+  renderStudents();
+};
+
 const saveSession = async () => {
   if (!students.length) {
     showFeedback('Primero escribe y comienza el juego para guardar una sesión.', 'neutral');
@@ -336,6 +346,7 @@ const applyBehaviorChange = (type) => {
 document.getElementById('startGameBtn').addEventListener('click', startGame);
 document.getElementById('saveSessionBtn').addEventListener('click', saveSession);
 document.getElementById('loadSessionBtn').addEventListener('click', loadSession);
+document.getElementById('resetBtn').addEventListener('click', resetGame);
 document.getElementById('goodBehaviorBtn').addEventListener('click', () => applyBehaviorChange('good'));
 document.getElementById('badBehaviorBtn').addEventListener('click', () => applyBehaviorChange('bad'));
 connectSupabaseBtn.addEventListener('click', () => {
