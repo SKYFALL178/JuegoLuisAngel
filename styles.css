@@ -169,6 +169,13 @@ button:hover {
   transform: translateY(-1px);
 }
 
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 button.primary {
   background: linear-gradient(135deg, var(--primary), #f0c128);
   color: #0d3355;

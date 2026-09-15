@@ -5,6 +5,7 @@ const SUPABASE_TABLE = 'school_state';
 let students = [];
 let selectedStudentIndex = null;
 let supabaseClient = null;
+let supabaseReady = false;
 
 const namesInput = document.getElementById('namesInput');
 const searchInput = document.getElementById('searchInput');
@@ -13,6 +14,18 @@ const selectedStudentName = document.getElementById('selectedStudentName');
 const feedbackBanner = document.getElementById('feedbackBanner');
 const supabaseUrlInput = document.getElementById('supabaseUrlInput');
 const supabaseKeyInput = document.getElementById('supabaseKeyInput');
+const syncNowBtn = document.getElementById('syncNowBtn');
+const connectSupabaseBtn = document.getElementById('connectSupabaseBtn');
+
+const updateSyncButtonState = () => {
+  const hasRealData = students.length > 0 || Boolean((namesInput.value || '').trim());
+  syncNowBtn.disabled = !supabaseReady || !hasRealData;
+  syncNowBtn.title = !supabaseReady
+    ? 'Primero conecta Supabase'
+    : !hasRealData
+      ? 'Aún no hay datos para sincronizar'
+      : 'Sincronizar con la nube';
+};
 
 const getSupabaseConfig = () => {
   const url = (supabaseUrlInput.value || '').trim();
@@ -63,6 +76,15 @@ const saveState = async () => {
 
   const config = getSupabaseConfig();
   if (!config) return;
+
+  if (!supabaseReady) {
+    return;
+  }
+
+  if (!students.length && !namesInput.value.trim()) {
+    showFeedback('Aún no hay datos para sincronizar en la nube.', 'neutral');
+    return;
+  }
 
   if (!supabaseClient) {
     supabaseClient = initSupabaseClient();
@@ -139,6 +161,7 @@ const getSanitizedNames = () => {
 };
 
 const renderStudents = () => {
+  updateSyncButtonState();
   studentsList.innerHTML = '';
 
   if (!students.length) {
@@ -326,19 +349,36 @@ document.getElementById('loadSessionBtn').addEventListener('click', loadSession)
 document.getElementById('resetBtn').addEventListener('click', resetGame);
 document.getElementById('goodBehaviorBtn').addEventListener('click', () => applyBehaviorChange('good'));
 document.getElementById('badBehaviorBtn').addEventListener('click', () => applyBehaviorChange('bad'));
-document.getElementById('connectSupabaseBtn').addEventListener('click', () => {
+connectSupabaseBtn.addEventListener('click', () => {
   const config = getSupabaseConfig();
   if (!config) {
     showFeedback('Ingresa la URL y la clave de Supabase antes de conectar.', 'neutral');
+    supabaseReady = false;
+    updateSyncButtonState();
     return;
   }
 
   supabaseClient = initSupabaseClient();
   if (supabaseClient) {
-    showFeedback('Conexión a Supabase lista. Puedes sincronizar.', 'good');
+    supabaseReady = true;
+    showFeedback('Conectado exitosamente', 'good');
+    updateSyncButtonState();
+  } else {
+    supabaseReady = false;
+    updateSyncButtonState();
   }
 });
-document.getElementById('syncNowBtn').addEventListener('click', async () => {
+syncNowBtn.addEventListener('click', async () => {
+  if (!supabaseReady) {
+    showFeedback('Primero conecta Supabase.', 'neutral');
+    return;
+  }
+
+  if (!students.length && !namesInput.value.trim()) {
+    showFeedback('Todavía no hay datos para sincronizar.', 'neutral');
+    return;
+  }
+
   await saveState();
   await loadState();
   renderStudents();
@@ -346,6 +386,7 @@ document.getElementById('syncNowBtn').addEventListener('click', async () => {
 searchInput.addEventListener('input', renderStudents);
 
 (async () => {
+  syncNowBtn.disabled = true;
   const hasSavedSession = await loadState();
   if (hasSavedSession) {
     showFeedback('Se restauró la última sesión guardada.', 'good');
